@@ -180,7 +180,7 @@ function Editor({ onChange }: EditorProps) {
         <button
           ref={plusButtonRef}
           className={classNames(
-            'absolute right-5 top-[-14px] rounded-full border border-[#a8a29e] p-1 text-[#a8a29e] transition-transform duration-300',
+            'absolute right-5 top-[-14px] rounded-full border border-[#a8a29e] p-1 text-[#a8a29e] transition-transform duration-300 z-50',
             { 'rotate-45': showFloatMenu }
           )}
           onClick={() => {
