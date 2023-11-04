@@ -67,7 +67,7 @@ export const Extensions = [
     }
   }),
   Placeholder.configure({
-    placeholder: 'Tell your story...'
+    placeholder: 'Write something...'
   }),
   Image.configure({
     allowBase64: true

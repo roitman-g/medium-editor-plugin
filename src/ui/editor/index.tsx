@@ -187,7 +187,7 @@ function Editor({ onChange }: EditorProps) {
             setShowFloatMenu(!showFloatMenu);
           }}
         >
-          <BsPlus className="text-[#a8a29e]" size={20} />
+          <BsPlus className="text-[#a8a29e] z-50" size={20} />
         </button>
 
         {showFloatMenu && (
