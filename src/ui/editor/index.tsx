@@ -1,14 +1,13 @@
 import '../../styles/editor.css';
 import React from 'react';
-import { EditorContent, FloatingMenu, JSONContent, useEditor
+import {
+  EditorContent,
+  FloatingMenu,
+  useEditor,
 } from '@tiptap/react';
 import classNames from 'classnames';
-import { useEffect, useRef, useState
-} from 'react';
-import {
-  BsImage, BsListOl,
-  BsListUl, BsPlus
-} from 'react-icons/bs';
+import { useEffect, useRef, useState } from 'react';
+import { BsImage, BsListOl, BsListUl, BsPlus } from 'react-icons/bs';
 import { PiBracketsCurly } from 'react-icons/pi';
 import { MdOutlineHorizontalRule } from 'react-icons/md';
 
@@ -20,10 +19,15 @@ import ImageResize from './extensions/image-resizer';
 import InlineSelector from './extensions/inline-selector';
 import { Extensions } from './extensions';
 import { EditorBubbleMenu } from './components/EditorBubbleMenu';
-function Editor() {
-  const [content, setContent] = useState<JSONContent>([]);
+
+interface EditorProps {
+  onChange?: (htmlContent: string) => any;
+}
+
+function Editor({ onChange }: EditorProps) {
+  // const [content, setContent] = useState<JSONContent>([]);
   // console.log('content', content)
-  const [plainContent, setPlainContent] = useState('');
+  // const [plainContent, setPlainContent] = useState('');
   // console.log('plainContent', plainContent)
   const [showBubbleMenu, setShowBubbleMenu] = useState(false);
   const [showFloatMenu, setShowFloatMenu] = useState(false);
@@ -36,10 +40,10 @@ function Editor() {
   // }, 300);
 
   const shouldFloatingMenuShow = (editor: any) => {
-    console.log('shouldFloatingMenuShow', editor);
-    console.log('editor.state', editor.state);
+    // console.log('shouldFloatingMenuShow', editor);
+    // console.log('editor.state', editor.state);
     const { selection } = editor.state;
-    
+
     // if current pointer is inside the code block, do not show the floating menu.
     if (selection.$head.parent.type.name === 'codeBlock') {
       return false;
@@ -47,7 +51,11 @@ function Editor() {
     // If the selection is not empty, do not show the floating menu.
     // If depth is 1, it means the selection is in the top level of the document.
     // ol, ul depth will not be 1, so we need to check if the selection is in the top level.
-    if (!selection.empty || selection.$head.parent.content.size > 0 || selection.$head.depth !== 1) {
+    if (
+      !selection.empty ||
+      selection.$head.parent.content.size > 0 ||
+      selection.$head.depth !== 1
+    ) {
       return false;
     }
 
@@ -66,12 +74,17 @@ function Editor() {
       window.removeEventListener('beforeunload', alertUser);
     };
   }, []);
-  
+
   const editor = useEditor({
     onUpdate({ editor }) {
-      setPlainContent(editor.getText());
-      setContent(editor.getJSON());
-    // debouncedContentJSON(editor.getJSON());
+
+      const html = editor.getHTML()
+      if (onChange) {
+        onChange(html)
+      }
+      // setPlainContent(editor.getText());
+      // setContent(editor.getJSON());
+      // debouncedContentJSON(editor.getJSON());
     },
     onFocus() {
       setShowFloatMenu(false);
@@ -90,8 +103,9 @@ function Editor() {
     },
     editorProps: {
       attributes: {
-        class: 'prose-lg prose-prime prose-headings:font-display font-default focus:outline-none max-w-full'
-      }
+        class:
+          'prose-lg prose-prime prose-headings:font-display font-default focus:outline-none max-w-full',
+      },
     },
     // only bullet list and ordered list
     enableInputRules: [
@@ -99,10 +113,10 @@ function Editor() {
       'orderedList',
       'blockquote',
       'heading',
-      'horizontalRule'
+      'horizontalRule',
     ],
     enablePasteRules: false,
-    extensions: Extensions
+    extensions: Extensions,
   });
 
   const handlePlusButtonClickOutside = () => {
@@ -121,9 +135,13 @@ function Editor() {
     const base64 = await ConvertBase64(file);
 
     if (base64) {
-      editor?.chain().focus().setImage({
-        src: base64
-      }).run();
+      editor
+        ?.chain()
+        .focus()
+        .setImage({
+          src: base64,
+        })
+        .run();
     }
 
     // console.log(editor.getHTML());
@@ -148,7 +166,7 @@ function Editor() {
   if (editor == null) return null;
 
   return (
-    <div className='relative min-h-[500px] mx-auto w-full max-w-screen-lg border-stone-200 bg-white p-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg'>
+    <div className="relative min-h-[500px] mx-auto w-full max-w-screen-lg border-stone-200 bg-white p-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
       <EditorBubbleMenu editor={editor} showBubbleMenu={showBubbleMenu} />
       <FloatingMenu
         className={classNames(showPlusButton ? 'flex' : 'hidden', 'relative')}
@@ -156,7 +174,7 @@ function Editor() {
         // don't show if current node is h1 or if current node is not empty
         shouldShow={() => shouldFloatingMenuShow(editor)}
         tippyOptions={{
-          duration: 100
+          duration: 100,
         }}
       >
         <button
@@ -165,39 +183,59 @@ function Editor() {
             'absolute right-5 top-[-14px] rounded-full border border-[#a8a29e] p-1 text-[#a8a29e] transition-transform duration-300',
             { 'rotate-45': showFloatMenu }
           )}
-          onClick={() => { 
-            setShowFloatMenu(!showFloatMenu); 
+          onClick={() => {
+            setShowFloatMenu(!showFloatMenu);
           }}
         >
           <BsPlus className="text-[#a8a29e]" size={20} />
         </button>
 
         {showFloatMenu && (
-          <div className='absolute -left-3 -top-5 flex h-10 w-48 items-center space-x-3 bg-white'>
-            <Button
-              onClick={handleClick}
-            >
+          <div className="absolute -left-3 -top-5 flex h-10 w-48 items-center space-x-3 bg-white">
+            <Button onClick={handleClick}>
               <BsImage className="text-[#a8a29e]" size={20} />
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+              onClick={() =>
+                editor
+                  .chain()
+                  .focus()
+                  .toggleCodeBlock()
+                  .run()
+              }
               className={editor.isActive('codeBlock') ? 'is-active' : ''}
             >
               <PiBracketsCurly className="text-[#a8a29e]" size={20} />
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              onClick={() =>
+                editor
+                  .chain()
+                  .focus()
+                  .toggleBulletList()
+                  .run()
+              }
             >
               <BsListUl className="text-[#a8a29e]" size={20} />
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              onClick={() =>
+                editor
+                  .chain()
+                  .focus()
+                  .toggleOrderedList()
+                  .run()
+              }
             >
               <BsListOl className=" text-[#a8a29e]" size={20} />
             </Button>
             <Button
               onClick={() => {
-                editor.chain().focus().setHorizontalRule().run();
+                editor
+                  .chain()
+                  .focus()
+                  .setHorizontalRule()
+                  .run();
               }}
             >
               <MdOutlineHorizontalRule className="text-[#a8a29e]" size={20} />
@@ -210,7 +248,7 @@ function Editor() {
         hidden
         accept="image/*"
         type="file"
-        onInput={(e) => {
+        onInput={e => {
           addImage(e);
         }}
       />
@@ -222,4 +260,3 @@ function Editor() {
 }
 
 export default Editor;
-
