@@ -22,9 +22,9 @@ import { Extensions } from './extensions';
 import { EditorBubbleMenu } from './components/EditorBubbleMenu';
 function Editor() {
   const [content, setContent] = useState<JSONContent>([]);
-  console.log('content', content)
+  // console.log('content', content)
   const [plainContent, setPlainContent] = useState('');
-  console.log('plainContent', plainContent)
+  // console.log('plainContent', plainContent)
   const [showBubbleMenu, setShowBubbleMenu] = useState(false);
   const [showFloatMenu, setShowFloatMenu] = useState(false);
   const [showPlusButton, setShowPlusButton] = useState(true);
