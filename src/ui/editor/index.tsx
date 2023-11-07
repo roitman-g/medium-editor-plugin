@@ -21,10 +21,11 @@ import { Extensions } from './extensions';
 import { EditorBubbleMenu } from './components/EditorBubbleMenu';
 
 interface EditorProps {
-  onChange?: (htmlContent: string) => any;
+  onChange: (htmlContent: string) => any;
+  content: string
 }
 
-function Editor({ onChange }: EditorProps) {
+function Editor({ onChange, content }: EditorProps) {
   // const [content, setContent] = useState<JSONContent>([]);
   // console.log('content', content)
   // const [plainContent, setPlainContent] = useState('');
@@ -76,6 +77,7 @@ function Editor({ onChange }: EditorProps) {
   }, []);
 
   const editor = useEditor({
+    content,
     onUpdate({ editor }) {
 
       const html = editor.getHTML()
