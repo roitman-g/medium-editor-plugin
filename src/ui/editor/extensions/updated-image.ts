@@ -1,6 +1,7 @@
 import Image from '@tiptap/extension-image';
+import { Node, textblockTypeInputRule } from '@tiptap/core';
 
-const UpdatedImage = Image.extend({
+export const UpdatedImage = Image.extend({
   addAttributes() {
     return {
       ...this.parent?.(),
@@ -9,9 +10,27 @@ const UpdatedImage = Image.extend({
       },
       height: {
         default: null
+      },
+      caption: {
+        default: null
       }
     };
-  }
+  },
 });
 
-export default UpdatedImage;
+
+export const Caption = Node.create({
+  name: 'caption',
+
+  group: 'block',
+
+  content: 'text*',
+
+  toDOM: () => ['figcaption', 0],
+
+  parseDOM: [{ tag: 'figcaption' }],
+
+  inputRules({ type }: any) {
+    return [textblockTypeInputRule({find: /^---$/, type})];
+  },
+});

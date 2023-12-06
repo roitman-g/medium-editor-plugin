@@ -9,7 +9,7 @@ import CharacterCount from '@tiptap/extension-character-count';
 import Document from '@tiptap/extension-document';
 
 import EnterAfterImage from './enter-after-image';
-import UpdatedImage from './updated-image';
+import {UpdatedImage, Caption} from './updated-image';
 
 const contentLimit = 5000;
 
@@ -88,5 +88,6 @@ export const Extensions = [
   UpdatedImage.configure({
     inline: true
   }),
+  Caption,
   EnterAfterImage
 ];
